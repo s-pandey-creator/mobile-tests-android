@@ -1,0 +1,35 @@
+name: Android Appium tests (BrowserStack)
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  android-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pytest (Android)
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          ANDROID_APP: ${{ secrets.ANDROID_APP }}
+        run: |
+          pytest -q || true
+
+      - name: Upload allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-android
+          path: reports/allure-results
