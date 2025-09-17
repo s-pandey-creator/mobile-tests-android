@@ -1,0 +1,23 @@
+# pages/login_page.py
+from appium.webdriver.common.appiumby import AppiumBy
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+class LoginPage:
+    def __init__(self, driver, wait=None, timeout=10):
+        """
+        Backwards-compatible constructor:
+        - Accepts LoginPage(driver, wait)
+        - Or LoginPage(driver) and it will create its own WebDriverWait(driver, timeout)
+        """
+        self.driver = driver
+        if wait is None:
+            self.wait = WebDriverWait(driver, timeout)
+        else:
+            self.wait = wait
+
+    def login(self, username, password):
+        # use AppiumBy.ACCESSIBILITY_ID for accessibility ids
+        self.wait.until(EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "test-Username"))).send_keys(username)
+        self.driver.find_element(AppiumBy.ACCESSIBILITY_ID, "test-Password").send_keys(password)
+        self.driver.find_element(AppiumBy.ACCESSIBILITY_ID, "test-LOGIN").click()
